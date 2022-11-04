@@ -1,10 +1,11 @@
-use macroquad::prelude::*;
+use macroquad::{color::hsl_to_rgb, prelude::*};
 use r2048::grid::{Action, Grid, GRID_SIZE};
 
 const CELL_SIZE: f32 = 100.0;
 const CELL_PADDING: f32 = 10.0;
 const CELL_FONT_SIZE: f32 = 40.0;
 const INPUT_DELAY: f64 = 0.2;
+const MAX_CELL_VAL: u32 = 2048;
 
 #[macroquad::main(window_conf)]
 async fn main() {
@@ -52,11 +53,27 @@ fn draw_grid(grid: &Grid) {
                 + (i as f32 - 2.0) * CELL_SIZE
                 + (i as f32 - 1.5) * CELL_PADDING;
 
-            draw_rectangle(rect_x, rect_y, CELL_SIZE, CELL_SIZE, BEIGE);
+            let val = grid.cells[i][j];
 
-            let text = grid.cells[i][j].to_string();
+            let (min_l, max_l) = (0.5, 0.975);
+            let l_scale = if val == 0 {
+                // handle log2(0)
+                0f32
+            } else {
+                (val as f32).log2() / (MAX_CELL_VAL as f32).log2()
+            };
+            let l = max_l - l_scale * (max_l - min_l);
+
+            draw_rectangle(
+                rect_x,
+                rect_y,
+                CELL_SIZE,
+                CELL_SIZE,
+                hsl_to_rgb(0.0, 1.0, l),
+            );
+
             draw_text(
-                &text,
+                &val.to_string(),
                 rect_x + CELL_FONT_SIZE,
                 rect_y + 0.5 * CELL_SIZE + 0.25 * CELL_FONT_SIZE,
                 CELL_FONT_SIZE,
