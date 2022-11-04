@@ -1,11 +1,11 @@
 use rand::Rng;
 use std::fmt;
 
-const GRID_SIZE: usize = 4;
+pub const GRID_SIZE: usize = 4;
 
 #[derive(Clone)]
 pub struct Grid {
-    cells: [[u32; GRID_SIZE]; GRID_SIZE],
+    pub cells: [[u32; GRID_SIZE]; GRID_SIZE],
 }
 
 impl fmt::Display for Grid {
